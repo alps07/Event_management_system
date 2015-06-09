@@ -1,0 +1,31 @@
+<div class="container">
+	<div class="row">
+		<div class="col-md-4"></div>
+		<div class="col-md-4"></div>
+		<div class="col-md-4">
+			<a href="/users/<%= session[:user_id]%>"><u>Event Dashboard</u></a> | <a href="/signout"><u>Lougout</u></a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4">Edit Your Profile</div>
+		<div class="col-md-4"></div>
+		<div class="col-md-4"></div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<form action="/users/<%= session[:user_id]%> " method="post">
+				<input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+				First name:<input type="text" name="first_name" value="<%= @user.first_name %>">
+				Last name:<input type="text" name="last_name" value="<%= @user.last_name %>">
+				Email:<input type="email" name="email" value="<%= @user.email %>">
+				Location: <input type="text" name="city" value="<%= @user.city %>">	
+				State: <input type="text" name="state" value="<%= @user.state %>">			
+				<!-- Password:<input type="password" name="password">
+				Confirm Password:<input type="password" name="password_confirmation"> -->
+				<input type="submit" action="submit" value="Update">
+			</form>
+
+		</div>
+		<div class="col-md-6"></div>
+	</div>
+</div>

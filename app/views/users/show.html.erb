@@ -1,0 +1,118 @@
+<h1> Welcome, <%= @user.first_name %>!</h1>
+<h4><a href="/users/<%= @user.id%>/edit"><u>Edit My Profile</u></a></h4>
+<h4><a href="/signout"><u>Logout</u></a></h4>
+<% if flash[:errors] %>
+	<% flash[:errors].each do |err| %>
+		<p class="btn-danger"><%= err %></p>
+	<% end %>
+<% end %>
+
+<% if @events.present? %>
+	<h4>Here are some of the events at your state:</h4>
+	<table class="table table-stripped table-bordered">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Date</th>
+				<th>Location</th>
+				<th>Host</th>
+				<th>Action/Status</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% @events.each do |e| %> 
+				<tr>
+					<td><u><a href="/events/<%= e.id %>"><%= e.name %></a></u></td>
+					<td><%= e.edate %></td>
+					<td><%= e.city %></td>
+					<td><%= e.user.first_name %></td>
+					<td>
+						<% if session[:user_id] == e.user_id %>
+						<a href="#"><u>Edit</u></a> | <a href="/events/<%= e.id %>" data-method='delete'><u>Delete</u></a>					
+						<% else %>
+							<%  result = e.attendees.find{|attendee| attendee.user_id == session[:user_id]} %>
+							<% if result.nil? %>
+								<form action="/attendees/" method="post">
+										<input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+										<input name="event_id" value="<%= e.id %>" type="hidden">
+										<button type="submit">Join</button>
+								</form>
+							<% else %>
+								<form action="/attendees/<%= e.id %>" method="post">
+									<input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+									<button type="submit">Cancel</button>
+								</form>
+							<% end %>
+						<% end %>
+					</td>
+				</tr>
+			<% end %>		
+		</tbody>
+	</table>
+<% end %>
+
+<% if @other_sate_events.present? %>
+	<h4>Here are some of the events on other state:</h4>
+	<table class="table table-stripped table-bordered">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Date</th>
+				<th>Location</th>
+				<th>State</th>
+				<th>Host</th>
+				<th>Action/Status</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% @other_sate_events.each do |e| %>
+				<tr>
+					<td><u><a href="/events/<%= e.id %>"><%= e.name %></a></u></td>
+					<td><%= e.edate %></td>
+					<td><%= e.city %></td>
+					<td><%= e.state %></td>
+					<td><%= e.user.first_name %></td>
+					<td>
+						<% result = e.attendees.find{|attendee| attendee.user_id == session[:user_id]} %>
+							<% if result.nil? %>
+								<form action="/attendees/" method="post">
+									<input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+									<input name="event_id" value="<%= e.id %>" type="hidden">
+									<button type="submit">Join</button>
+								</form>
+							<% else %>
+								<form action="/attendees/<%= e.id %>" method="post">
+									<input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+									<button type="submit">Cancel</button>
+								</form>
+						<% end %>
+					</td>
+				</tr>
+			<% end %>				
+		</tbody>
+	</table>
+<% end %>
+
+<fieldset style="width:400px; margin:50px;">
+	<h3>Add Event</h3>
+	<form role="form" action="/events" method="post">
+		<input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+		<div class="form-group">
+	    <label for="email">Name:</label>
+	    <input type="text" class="form-control" id="email" name='name'>
+	  </div>
+	  <div class="form-group">
+	    <label for="email">Date:</label>
+	    <input type="date" class="form-control" id="email" name='edate'>
+	  </div>
+	  <div class="form-group">
+	    <label for="email">Location:</label>
+	    <input type="text" class="form-control" id="email" name='city'>
+	  </div>
+	  <div class="form-group">
+	    <label for="email">State:</label>
+	    <input type="text" class="form-control" id="email" name='state'>
+	  </div>	  
+	  <button type="submit" class="btn btn-default">Add Event</button>
+	</form>	
+</fieldset>

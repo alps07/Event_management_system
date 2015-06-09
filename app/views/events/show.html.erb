@@ -1,0 +1,61 @@
+<div class="container">	
+	<div class="row">
+		<div class="col-md-4"></div>
+		<div class="col-md-4"></div>
+		<div class="col-md-4">
+			<a href="/users/<%= session[:user_id]%>"><u>Event Dashboard</u></a> | <a href="/signout"><u>Lougout</u></a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<h1><%= @event.name %></h1>
+
+			<p>Host: <%= @event.user.first_name+ " "+ @event.user.last_name %> </p>
+			<p>Date: <%= @event.edate.strftime('%B %d, %Y') %></p>
+			<p>Location: <%= @event.city %>, <%= @event.state %> </p>
+			<p>People who are joining the event: <%= @event.attendees.length %></p>
+		</div>
+	</div>
+	<div class ="row">
+	<div class="col-md-6">
+		<% if @event.attendees.present? %>
+			<table class="table table-stripped table-bordered">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Location</th>
+						<th>State</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% @event.attendees.each do |a| %> 
+					<tr>
+						<td><%= a.user.first_name %> <%= a.user.last_name %></td>
+						<td><%= a.user.city %></td>
+						<td><%= a.user.state %></td>
+					</tr>
+					<% end %>
+				</tbody>
+			</table>
+		<% end %>
+	</div>
+	<div class="col-md-6">
+		<h3>Discussion about this event:</h3>
+		<% if @event.comments.present? %>			
+			<div style="width:400px; border: 1px solid black ">
+				<% @event.comments.each do |c| %>
+				<p style="border-bottom: 1px dotted black"><%= c.user.first_name %> says: <%= c.content %>
+				</p>
+				<% end %>
+			</div>
+		<% end %>
+		<h5>Add Comment:</h5>
+		<form action="/comments" method="post">
+			<input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+			<input name="event_id" value="<%= @event.id %>" type="hidden">
+			<textarea name="content"></textarea>			
+			<button type="submit">Submit Comments</button>
+		</form>
+	</div>
+</div>
+</div>
